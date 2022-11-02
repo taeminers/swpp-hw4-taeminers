@@ -51,15 +51,19 @@ def signout(request):
     
         
 def comment(request, id):
-    if request.method == 'POST':
-            return HttpResponse(status = 405)
-    if request.user.is_authenticated :
-        if (Comment.objects.filter(id = id)): 
-            if request.method == 'GET':
+    if request.method == 'GET':
+        if request.user.is_authenticated :
+            if (Comment.objects.filter(id = id)): 
                 comment = Comment.objects.get(id = id)
                 response_comment = {'article' : comment.article_id , 'content' : comment.content, 'author' : comment.author_id}
                 return JsonResponse(response_comment)
-            if request.method == 'PUT':
+            else:
+                return HttpResponse(status= 404)
+        else:
+            return HttpResponse(status = 401)
+    elif request.method == 'PUT':
+        if request.user.is_authenticated :
+            if (Comment.objects.filter(id = id)): 
                 comment = Comment.objects.get(id = id)
                 try : 
                     body = request.body.decode()
@@ -73,29 +77,41 @@ def comment(request, id):
                     return HttpResponse(json.dumps(response_comment), content_type = "application/json", status=200)
                 else :
                     return HttpResponse(status = 403)
-            if request.method == 'DELETE':
+            else :
+                return HttpResponse(status=404)
+        else:
+            return HttpResponse(status=401)
+    elif request.method == 'DELETE':
+        if request.user.is_authenticated :
+            if (Comment.objects.filter(id = id)): 
                 comment = Comment.objects.get(id = id)
                 if (comment.author_id == request.user.id):
                     Comment.objects.filter(id = id).delete()
                     return HttpResponse(status = 200)
                 else :
                     return HttpResponse(status=403)
+            else:
+                return HttpResponse(status=404)
         else :
-            return HttpResponse(status = 404) 
+            return HttpResponse(status = 401)
     else :
-        return HttpResponse(status = 401)
-    
+        return HttpResponse(status=405)
+        
 
 def article_id(request, id):
-    if request.method == 'POST':
-        return HttpResponse(status = 405)
-    if request.user.is_authenticated :
-        if (Article.objects.filter(id = id)):
-            if request.method == 'GET':
+    if request.method == 'GET':
+        if request.user.is_authenticated :
+            if (Article.objects.filter(id = id)):
                 article = Article.objects.get(id = id)
                 response_article = {'title': article.title, 'content' : article.content, 'author' : article.author_id}
                 return JsonResponse(response_article)
-            if request.method == 'PUT':
+            else :
+                return HttpResponse(status=404)
+        else:
+            return HttpResponse(status=401)
+    elif request.method == 'PUT':
+        if request.user.is_authenticated :
+            if (Article.objects.filter(id = id)):
                 article = Article.objects.get(id = id)
                 try :
                     body  = request.body.decode()
@@ -111,24 +127,29 @@ def article_id(request, id):
                     return HttpResponse(json.dumps(response_article), content_type= "application/json", status=200)
                 else :
                     return HttpResponse(status=403)
-            if request.method == 'DELETE':
+            else :
+                return HttpResponse(status=404)
+        else :
+            return HttpResponse(status=401)
+    elif request.method == 'DELETE':
+        if request.user.is_authenticated :
+            if (Article.objects.filter(id = id)):
                 article = Article.objects.get(id = id)
                 if(article.author_id == request.user.id):
                     Article.objects.filter(id = id).delete()
                     return HttpResponse(status = 200)
                 else :
                     return HttpResponse(status = 403)
+            else :
+                return HttpResponse(status=404)
         else :
-            return HttpResponse(status=404)
+            return HttpResponse(status = 401)
     else :
-        return HttpResponse(status = 401)
-    
-
-def article_comment(request, id):   
-    if request.method == 'DELETE' or request.method == 'PUT':
         return HttpResponse(status=405)
-    if request.user.is_authenticated :
-        if request.method == 'GET':
+        
+def article_comment(request, id):   
+    if request.method == 'GET':
+        if request.user.is_authenticated :
             #test this again
             comments = [comment for comment in Comment.objects.filter(article_id = id).values()]
             if (comments):
@@ -137,7 +158,10 @@ def article_comment(request, id):
                 return JsonResponse(comments, safe = False)
             else :
                 return HttpResponse(status=404)
-        if request.method == 'POST':
+        else :
+            return HttpResponse(status = 401)
+    elif request.method == 'POST':
+        if request.user.is_authenticated :
             try :
                 body = request.body.decode()
                 comment_content = json.loads(body)['content']
@@ -147,14 +171,14 @@ def article_comment(request, id):
             newComment.save()
             response_comment = {'content' : newComment.content, "id" : newComment.id, "author_id" : newComment.author_id, "article_id" : newComment.article_id}
             return HttpResponse(json.dumps(response_comment), content_type = "application/json", status = 201)
+        else :
+            return HttpResponse(status=401)
     else :
-        return HttpResponse(status=401)
+        return HttpResponse(status=405)
     
 def article(request):
-    if request.method == 'DELETE' or request.method == 'PUT':
-        return HttpResponse(status=405)
-    if request.user.is_authenticated :
-        if request.method == 'GET':
+    if request.method == 'GET':
+        if request.user.is_authenticated :
             if(Article.objects.all()):
                 article_set = [article for article in Article.objects.all().values()]
                 for article in article_set:
@@ -162,7 +186,10 @@ def article(request):
                 return JsonResponse(article_set, safe = False)    
             else :
                 return HttpResponse(status =404)
-        if request.method == 'POST':
+        else :
+            return HttpResponse(status = 401)
+    elif request.method == 'POST':
+        if request.user.is_authenticated :
             try :
                 body = request.body.decode()
                 article_title = json.loads(body)['title']   
@@ -174,10 +201,14 @@ def article(request):
             article.save()
             response_article = {'title' : article.title, 'content' : article.content, 'id' : article.id, 'author_id' : article.author_id}
             return HttpResponse(json.dumps(response_article), content_type = "application/json", status=201)
+        else : 
+            return HttpResponse(status = 401)
     else :
-        return HttpResponse(status = 401)
+        return HttpResponse(status = 405)
     
 @ensure_csrf_cookie
 def token(request):
     if request.method == 'GET':
         return HttpResponse(status=204)
+    else:
+        return HttpResponseNotAllowed(['GET'])

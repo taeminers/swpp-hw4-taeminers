@@ -87,7 +87,13 @@ class BlogTestCase(TestCase):
         new_article.save()
         new_comment = Comment(article=new_article, content='Comment!', author=get_user(client))
         new_comment.save()   
+        response = client.put('/api/comment/1/')
+        self.assertEqual(response.status_code, 404)
         signout = client.get('/api/signout/')
+        response = client.put('/api/comment/1/')
+        self.assertEqual(response.status_code, 401)
+        response = client.delete('/api/comment/1/')
+        self.assertEqual(response.status_code, 401)
         client.get('/api/signout/')
         response = client.get('/api/comment/1/')
         self.assertEqual(response.status_code, 401) 
@@ -99,6 +105,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(responseDelete.status_code, 403)
         lastresponse = client.get('/api/comment/1/')
         self.assertEqual(lastresponse.status_code, 404)
+        client.delete('/api/comment/1/')
+        
     
     def test_article_id(self):
         client = Client()
@@ -115,6 +123,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(response3.status_code, 400)
         responseDelete = client.delete('/api/article/1/')
         self.assertEqual(responseDelete.status_code , 200)
+        response = client.delete('/api/article/3/')
+        self.assertEqual(response.status_code , 404)
         new_article = Article(title = 'I Love SWPP!', content = "testing", author = get_user(client))
         new_article.save()
         signout = client.get('/api/signout/')
@@ -128,7 +138,15 @@ class BlogTestCase(TestCase):
         self.assertEqual(responseDelete.status_code, 403)
         lastresponse = client.get('/api/article/1/')
         self.assertEqual(lastresponse.status_code, 404)
-        
+        response = client.put('/api/article/3/')
+        self.assertEqual(response.status_code, 404)
+        client.get('/api/signout/')
+        response = client.put('/api/article/3/')
+        self.assertEqual(response.status_code, 401)
+        response = client.delete('/api/article/3/')
+        self.assertEqual(response.status_code, 401)
+
+
     def test_article_comment(self):
         client = Client()
         loggingin = client.post('/api/signin/', json.dumps({'username' : 'testUsername', 'password': 'password'}), content_type ='application/json')     
@@ -146,6 +164,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         signout = client.get('/api/signout/')
         response = client.get('/api/article/1/comment/')
+        self.assertEqual(response.status_code, 401)
+        response = client.post('/api/article/1/comment/')
         self.assertEqual(response.status_code, 401)
             
     def test_article(self):
@@ -165,5 +185,14 @@ class BlogTestCase(TestCase):
         signout = client.get('/api/signout/')
         response = client.get('/api/article/')
         self.assertEqual(response.status_code, 401)
+        response = client.post('/api/article/')
+        self.assertEqual(response.status_code, 401)
+        response = client.put('/api/article/')
+        self.assertEqual(response.status_code, 405)
+
+    def test_token(self):
+        client = Client()
+        response = client.post('/api/token/')
+        self.assertEqual(response.status_code, 405)
     
  

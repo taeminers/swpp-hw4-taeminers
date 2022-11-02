@@ -341,3 +341,56 @@ coverage report -m
 git add .
 git commit -m "need to change if else order"
 exit
+clear
+coverage run --source='./blog' manage.py test
+clear
+coverage report -m
+python manage.py runserver 0.0.00:8000
+python manage.py runserver 0.0.0.0:8000
+clear
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+clear
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+exit
