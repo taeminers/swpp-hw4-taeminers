@@ -14,10 +14,8 @@ class BlogTestCase(TestCase):
         response = client.post('/api/signup/', json.dumps({'username': 'chris', 'password': 'chris'}),
                                content_type='application/json')
         self.assertEqual(response.status_code, 403)  # Request without csrf token returns 403 response
-
         response = client.get('/api/token/')
         csrftoken = response.cookies['csrftoken'].value  # Get csrf token from cookie
-
         response = client.post('/api/signup/', json.dumps({'username': 'chris', 'password': 'chris'}),
                                content_type='application/json', HTTP_X_CSRFTOKEN=csrftoken)
         self.assertEqual(response.status_code, 201)  # Pass csrf protection
@@ -64,48 +62,108 @@ class BlogTestCase(TestCase):
         self.assertEqual(responsePUT.status_code, 405)
         responsePOST = client.post('/api/signout/')
         self.assertEqual(responsePOST.status_code, 405)
-        if(get_user(client).is_authenticated):
-            response = client.get('/api/signout/')
-            self.assertEqual(response.status_code, 204)
-        if not (get_user(client).is_authenticated):
-            response = client.get('/api/signout/')
-            self.assertEqual(response.status_code, 401)
-            
+        response = client.get('/api/signout/')
+        self.assertEqual(response.status_code, 204)
+        client.get('/api/signout/') 
+        response = client.get('/api/signout/')
+        self.assertEqual(response.status_code, 401)
+                     
     def test_comment(self):
         client = Client()
         loggingin = client.post('/api/signin/', json.dumps({'username' : 'testUsername', 'password': 'password'}),
                                content_type ='application/json')
         response = client.post('/api/comment/1/')
         self.assertEqual(response.status_code, 405)
-        if(get_user(client).is_authenticated):
-            if(Comment.objects.filter(id = 1)) :
-                response = client.get('/api/comment/1/')
-                jsonResponse = response.json()
-                self.assertEqual(response.status_code, 200)
-                if(get_user(client).id == jsonResponse['author']) :            
-                    response3 = client.put('/api/comment/1/', json.dumps({'content': 'wow'}), content_type = 'application/json')
-                    self.assertEqual(response3.status_code, 200)
-                    responseDelete = client.delete('/api/comment/1/')
-                    self.assertEqual(responseDelete.status_code , 200)
-                    new_article = Article(title = 'I Love SWPP!', content = "testing", author = get_user(client))
-                    new_article.save()
-                    new_comment = Comment(article=new_article, content='Comment!', author=get_user(client))
-                    new_comment.save()   
-            if not (Comment.objects.filter(id=2)) : 
-                response = client.get('/api/comment/2/')
-                self.assertEqual(response.status_code, 404)
+        response = client.get('/api/comment/1/')
+        jsonResponse = response.json()
+        self.assertEqual(response.status_code, 200)
+        response3 = client.put('/api/comment/1/', json.dumps({'content': 'wow'}), content_type = 'application/json')
+        self.assertEqual(response3.status_code, 200)
+        response = client.put('/api/comment/1/', json.dumps({'wrongcontent': 'wow'}), content_type = 'application/json' )
+        self.assertEqual(response.status_code , 400)
+        responseDelete = client.delete('/api/comment/1/')
+        self.assertEqual(responseDelete.status_code , 200)
+        new_article = Article(title = 'I Love SWPP!', content = "testing", author = get_user(client))
+        new_article.save()
+        new_comment = Comment(article=new_article, content='Comment!', author=get_user(client))
+        new_comment.save()   
         signout = client.get('/api/signout/')
-        if not (get_user(client).is_authenticated):
-            response = client.get('/api/comment/1/')
-            self.assertEqual(response.status_code, 401)
-          
+        client.get('/api/signout/')
+        response = client.get('/api/comment/1/')
+        self.assertEqual(response.status_code, 401) 
         changeUser = client.post('/api/signin/', json.dumps({'username' : 'swpp', 'password': 'password'}),
                                content_type ='application/json')
-        if(get_user(client).id != jsonResponse['author']):
-            responsed = client.put('/api/comment/2/', json.dumps({'content': 'wow'}), content_type = 'application/json')
-            self.assertEqual(responsed.status_code, 403)
-            responseDelete = client.delete('/api/comment/2/')
-            self.assertEqual(responseDelete.status_code, 403)
+        responsed = client.put('/api/comment/2/', json.dumps({'content': 'wow'}), content_type = 'application/json')
+        self.assertEqual(responsed.status_code, 403)
+        responseDelete = client.delete('/api/comment/2/')
+        self.assertEqual(responseDelete.status_code, 403)
         lastresponse = client.get('/api/comment/1/')
         self.assertEqual(lastresponse.status_code, 404)
     
+    def test_article_id(self):
+        client = Client()
+        loggingin = client.post('/api/signin/', json.dumps({'username' : 'testUsername', 'password': 'password'}),
+                            content_type ='application/json')
+        response = client.post('/api/article/1/')
+        self.assertEqual(response.status_code, 405)
+        response = client.get('/api/article/1/')
+        jsonResponse = response.json()
+        self.assertEqual(response.status_code, 200)
+        response3 = client.put('/api/article/1/', json.dumps({'title' : 'changed' , 'content': 'wow'}), content_type = 'application/json')
+        self.assertEqual(response3.status_code, 200)
+        response3 = client.put('/api/article/1/', json.dumps({'wrongformat' : 'changed' , 'content': 'wow'}), content_type = 'application/json')
+        self.assertEqual(response3.status_code, 400)
+        responseDelete = client.delete('/api/article/1/')
+        self.assertEqual(responseDelete.status_code , 200)
+        new_article = Article(title = 'I Love SWPP!', content = "testing", author = get_user(client))
+        new_article.save()
+        signout = client.get('/api/signout/')
+        response = client.get('/api/article/1/')
+        self.assertEqual(response.status_code, 401)
+        changeUser = client.post('/api/signin/', json.dumps({'username' : 'swpp', 'password': 'password'}),
+                            content_type ='application/json')
+        responsed = client.put('/api/article/2/', json.dumps({'title':'changed', 'content': 'wow'}), content_type = 'application/json')
+        self.assertEqual(responsed.status_code, 403)
+        responseDelete = client.delete('/api/article/2/')
+        self.assertEqual(responseDelete.status_code, 403)
+        lastresponse = client.get('/api/article/1/')
+        self.assertEqual(lastresponse.status_code, 404)
+        
+    def test_article_comment(self):
+        client = Client()
+        loggingin = client.post('/api/signin/', json.dumps({'username' : 'testUsername', 'password': 'password'}), content_type ='application/json')     
+        response = client.delete('/api/article/1/comment/')
+        self.assertEqual(response.status_code , 405)
+        response = client.put('/api/article/1/comment/')
+        self.assertEqual(response.status_code , 405)
+        response = client.get('/api/article/1/comment/')
+        self.assertEqual(response.status_code, 200)
+        response = client.get('/api/article/2/comment/')
+        self.assertEqual(response.status_code, 404)
+        response = client.post('/api/article/1/comment/', json.dumps({'content' : 'test'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 201)
+        response = client.post('/api/article/1/comment/', json.dumps({'wrongconte' : 'test'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 400)
+        signout = client.get('/api/signout/')
+        response = client.get('/api/article/1/comment/')
+        self.assertEqual(response.status_code, 401)
+            
+    def test_article(self):
+        client = Client()
+        client.post('/api/signin/', json.dumps({'username' : 'testUsername', 'password': 'password'}), content_type ='application/json')     
+        response = client.delete('/api/article/')
+        self.assertEqual(response.status_code, 405)
+        response = client.get('/api/article/')
+        self.assertEqual(response.status_code, 200)
+        Article.objects.filter(id = 1).delete()
+        response = client.get('/api/article/')
+        self.assertEqual(response.status_code, 404)
+        response = client.post('/api/article/', json.dumps({'title':'title', 'content':'contenet'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 201)
+        response = client.post('/api/article/', json.dumps({'wrong':'title', 'content':'contenet'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 400)
+        signout = client.get('/api/signout/')
+        response = client.get('/api/article/')
+        self.assertEqual(response.status_code, 401)
+    
+ 

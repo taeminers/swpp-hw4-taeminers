@@ -10,8 +10,8 @@ from django.contrib.auth import authenticate, login, logout
 
 
 def signup(request):
-    if request.method == 'GET' or request.method =='DELETE' or request.method == 'PUT':
-        return HttpResponse(status = 405)
+    """if request.method == 'GET' or request.method =='DELETE' or request.method == 'PUT':
+        return HttpResponse(status = 405)"""
     if request.method == 'POST':
         #do we need to check if username already exsits?
         req_data = json.loads(request.body.decode())
@@ -19,11 +19,10 @@ def signup(request):
         password = req_data['password']
         User.objects.create_user(username=username, password=password)
         return HttpResponse(status=201)
+    else : 
+        return HttpResponse(status=405)
     
-@csrf_exempt
 def signin(request):
-    if request.method == 'GET' or request.method =='DELETE' or request.method == 'PUT':
-        return HttpResponse(status = 405)
     if request.method == 'POST':
         req_data = json.loads(request.body.decode())
         username = req_data['username']
@@ -34,19 +33,23 @@ def signin(request):
             return HttpResponse(status = 204)
         else:
             return HttpResponse(status=401)
-        
+    else :
+        return HttpResponse(status = 405)  
+    
 def signout(request):
-    if request.method == 'DELETE' or request.method == 'PUT' or request.method == 'POST':
-        return HttpResponse(status=405)
-    if request.user.is_authenticated :
-        if request.method == 'GET':
+    """if request.method == 'DELETE' or request.method == 'PUT' or request.method == 'POST':
+        return HttpResponse(status=405)"""
+    if request.method == 'GET':
+        if request.user.is_authenticated :
             logout(request)
             return HttpResponse(status = 204)
-    else :
-        return HttpResponse(status = 401)
+        else :
+            return HttpResponse(status = 401)
+    else : 
+        return HttpResponse(status=405)
 
     
-@csrf_exempt        
+        
 def comment(request, id):
     if request.method == 'POST':
             return HttpResponse(status = 405)
@@ -82,7 +85,7 @@ def comment(request, id):
     else :
         return HttpResponse(status = 401)
     
-@csrf_exempt
+
 def article_id(request, id):
     if request.method == 'POST':
         return HttpResponse(status = 405)
@@ -120,12 +123,13 @@ def article_id(request, id):
     else :
         return HttpResponse(status = 401)
     
-@csrf_exempt
+
 def article_comment(request, id):   
     if request.method == 'DELETE' or request.method == 'PUT':
         return HttpResponse(status=405)
     if request.user.is_authenticated :
         if request.method == 'GET':
+            #test this again
             comments = [comment for comment in Comment.objects.filter(article_id = id).values()]
             if (comments):
                 for comment in comments:
@@ -146,18 +150,18 @@ def article_comment(request, id):
     else :
         return HttpResponse(status=401)
     
-@csrf_exempt
 def article(request):
     if request.method == 'DELETE' or request.method == 'PUT':
         return HttpResponse(status=405)
     if request.user.is_authenticated :
         if request.method == 'GET':
-            article_set = [article for article in Article.objects.all().values()]
-            if article_set is None :
+            if(Article.objects.all()):
+                article_set = [article for article in Article.objects.all().values()]
+                for article in article_set:
+                    article.pop("id")
+                return JsonResponse(article_set, safe = False)    
+            else :
                 return HttpResponse(status =404)
-            for article in article_set:
-                article.pop("id")
-            return JsonResponse(article_set, safe = False)    
         if request.method == 'POST':
             try :
                 body = request.body.decode()
@@ -177,5 +181,3 @@ def article(request):
 def token(request):
     if request.method == 'GET':
         return HttpResponse(status=204)
-    else:
-        return HttpResponse(NotAllowed(['GET']))

@@ -166,3 +166,178 @@ coverage report -m
 coverage run --source='.' manage.py test blog
 coverage report -m
 exit
+python manage.py test
+coverage run --source='.' manage.py test blog
+coverage report -m
+exit
+clear
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+clear
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+clear
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+clear
+coverage run --source='.' manage.py test blog
+python manage.py runserver 0.0.0.0:8000
+clear
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage run --source='.' manage.py test blog
+coverage report -m
+python manage.py runserver 0.0.0.0:8000
+clear
+python manage.py runserver 0.0.0.0:8000
+clear
+coverage run --source='.' manage.py test blog
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --source='./blog' manage.py test
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+claer
+clear
+coverage run --source='./blog' manage.py test
+clear
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage html
+coverage run --source='./blog' manage.py test
+coverage html
+coverage report -m
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+python manage.py runserver 0.0.0.0:8000
+clear
+coverage run --branch --source='./blog' manage.py test
+coverage report -m
+coverage run --source='./blog' manage.py test
+coverage report -m
+git add .
+git commit -m "need to change if else order"
+exit
